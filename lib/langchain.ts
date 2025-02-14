@@ -33,7 +33,7 @@ export async function generateDocs(docId: string){
     console.log("--- Fetch to download URL from firebase.. ---")
     const firebaseRef = await adminDb.collection("users")
     .doc(userId)
-    .collection("file")
+    .collection("files")
     .doc(docId)
     .get();
 
@@ -44,6 +44,27 @@ export async function generateDocs(docId: string){
     }
 
     console.log(`--- download URL fetched successfully: ${downloadUrl}`)
+
+    // download the pdf
+    const response = await fetch(downloadUrl)
+
+    // load the PDF into a PDFDocument object.
+    const data = await response.blob()
+
+    // load the PDF document from the specified path.
+    console.log("--- Loading PDF document... ---")
+    const loader = new PDFLoader(data)
+    const docs = await loader.load()
+
+    // split the docs into smaller parts for easier processing.
+    console.log("--- Splitting the document into smaller parts ---")
+    const splitter = new RecursiveCharacterTextSplitter();
+
+    const splitDocs = await splitter.splitDocuments(docs);
+    console.log(`--- Split into ${splitDocs.length} parts ---`);
+
+    return splitDocs
+
 }
 
 async function namespaceExists(index: Index<RecordMetadata>, namespace: string) {
@@ -56,7 +77,7 @@ async function namespaceExists(index: Index<RecordMetadata>, namespace: string) 
 
 }
 
-export async function generateEmbrddingsInPineconeVectorStore(docId: string) {
+export async function generateEmbeddingsPineconeVectorStore(docId: string) {
     const {userId} = await auth()
     
     if(!userId){
@@ -87,9 +108,25 @@ export async function generateEmbrddingsInPineconeVectorStore(docId: string) {
         
         return pineconeVectorStore;
     }else{
+
         // if the namespace does not exists, download the pdf from fireStore via the stored Download URL & 
         // generate the embedding and store then in the Pinecone vector store.
-        const splitDocs = await generateDocs(docId)
+        const splitDocs = await generateDocs(docId);
+
+        console.log(`--- Storing the embedding in namespace ${docId} in the ${indexName} pinecone vector store... ---`)
+
+        // genenrating and storing the documents here.
+        pineconeVectorStore = await PineconeStore.fromDocuments(
+            splitDocs,
+            embedding,
+            {
+                pineconeIndex: index,
+                namespace: docId
+            }
+        );
+
+        return pineconeVectorStore;
     }
+
 
 }
