@@ -1,36 +1,43 @@
-  import Chat from "@/components/Chat";
-  import PdfView from "@/components/PdfView";
-  import { adminDb } from "@/firebaseAdmin";
-  import { auth } from "@clerk/nextjs/server";
+import Chat from "@/components/Chat";
+import PdfView from "@/components/PdfView";
+import { adminDb } from "@/firebaseAdmin";
+import { auth } from "@clerk/nextjs/server";
 
-  async function ChatToFilePage({ params }: { params: { id: string } }) {
-    auth.protect();
-    const { userId } = await auth();
 
-     // Await the entire params object
-    const resolvedParams = await params;
-    const id = resolvedParams.id;
 
-    const ref = await adminDb
-      .collection("users")
-      .doc(userId!)
-      .collection("files")
-      .doc(id)
-      .get();
+async function ChatToFilePage({
+  params: { id },
+}: {
+  params: {
+    id: string;
+  };
+}) {
+  // Auth protection
+  auth.protect();
+  const { userId } = await auth();
 
-    const url = ref.data()?.downloadUrl;
+  // Fetch file data
+  const ref = await adminDb
+    .collection("users")
+    .doc(userId!)
+    .collection("files")
+    .doc(id)
+    .get();
 
-    return (
-      <div className="grid lg:grid-cols-5 h-full overflow-hidden">
-        <div className="col-span-5 lg:col-span-2 overflow-y-auto">
-          <Chat id={id} />
-        </div>
+  const url = ref.data()?.downloadUrl;
 
-        <div className="col-span-5 lg:col-span-3 bg-gray-100 border-r-2 lg:border-indigo-600 lg:-order-1 overflow-auto">
-          <PdfView url={url} />
-        </div>
+  // Render UI
+  return (
+    <div className="grid lg:grid-cols-5 h-full overflow-hidden">
+      <div className="col-span-5 lg:col-span-2 overflow-y-auto">
+        <Chat id={id} />
       </div>
-    );
-  }
 
-  export default ChatToFilePage;
+      <div className="col-span-5 lg:col-span-3 bg-gray-100 border-r-2 lg:border-indigo-600 lg:-order-1 overflow-auto">
+        <PdfView url={url} />
+      </div>
+    </div>
+  );
+}
+
+export default ChatToFilePage;

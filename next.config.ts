@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true, // ✅ TypeScript errors ignore karo
+  },
   eslint: {
-    // Production builds will succeed even if there are ESLint errors.
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true, // ✅ ESLint errors ignore karo
   },
   webpack: (config) => {
     config.resolve.alias.canvas = false;

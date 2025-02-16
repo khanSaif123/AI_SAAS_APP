@@ -3,11 +3,10 @@
 import { adminDb } from '@/firebaseAdmin';
 import { auth } from '@clerk/nextjs/server'
 import { Message } from "@/components/Chat";
-import React from 'react'
 import { generateLangchainCompletion } from '@/lib/langchain';
 
-const FREE_LIMIT = 3;
-const PRO_LIMIT = 100;
+// const FREE_LIMIT = 3;
+// const PRO_LIMIT = 100;
 
 const askQuestion = async (id: string, question: string) => {
     auth.protect()
@@ -22,10 +21,10 @@ const askQuestion = async (id: string, question: string) => {
     .collection("chat")
 
     // check how many user messages are in the chat
-    const chatSnapshot = await chatRef.get();
-    const userMessages = chatSnapshot.docs.filter(
-        (doc) => doc.data().role === "human"
-    );
+    // const chatSnapshot = await chatRef.get();
+    // const userMessages = chatSnapshot.docs.filter(
+    //     (doc) => doc.data().role === "human"
+    // );
     
     // limit the pro or free user: TODO
 
