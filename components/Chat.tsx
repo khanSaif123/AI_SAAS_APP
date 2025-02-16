@@ -29,7 +29,7 @@ const Chat = ({id} : {id: string}) => {
     const bottomOfChatRef = useRef<HTMLDivElement>(null);
 
     // connection react-fire base-hook. snap shot give the real time listner of chat doc
-    const [snapshot, loading, error] = useCollection(
+    const [snapshot, loading] = useCollection(
         user && query(
             collection(db, "users", user?.id, "files", id, "chat"),
             orderBy('createdAt', "asc")
