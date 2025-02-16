@@ -3,13 +3,19 @@ import PdfView from "@/components/PdfView";
 import { adminDb } from "@/firebaseAdmin";
 import { auth } from "@clerk/nextjs/server";
 
-async function ChatToFilePage({
-  params: { id },
-}: {
+// Define PageProps type
+type PageProps = {
   params: {
     id: string;
   };
-}) {
+  searchParams?: {
+    [key: string]: string | string[] | undefined;
+  };
+};
+
+async function ChatToFilePage({ params }: PageProps) {
+  const { id } = params;
+
   auth.protect();
   const { userId } = await auth();
 
@@ -21,6 +27,9 @@ async function ChatToFilePage({
     .get();
 
   const url = ref.data()?.downloadUrl;
+
+  console.log("User ID:", userId);
+  console.log("Download URL:", url);
 
   return (
     <div className="grid lg:grid-cols-5 h-full overflow-hidden">
