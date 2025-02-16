@@ -13,7 +13,7 @@ async function ChatToFilePage({
   };
 }) {
   // Auth protection
-  auth.protect();
+  auth().protect();
   const { userId } = await auth();
 
   // Fetch file data

@@ -9,7 +9,7 @@ import { generateLangchainCompletion } from '@/lib/langchain';
 // const PRO_LIMIT = 100;
 
 const askQuestion = async (id: string, question: string) => {
-    auth.protect()
+    auth().protect()
     const {userId} = await auth()
     
     // get the collection where we goona push our chat.

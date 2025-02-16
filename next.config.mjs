@@ -1,11 +1,10 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   typescript: {
-    ignoreBuildErrors: true, // ✅ TypeScript errors ignore karo
+    ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: true, // ✅ ESLint errors ignore karo
+    ignoreDuringBuilds: true,
   },
   webpack: (config) => {
     config.resolve.alias.canvas = false;
@@ -25,4 +24,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default nextConfig; // ✅ `module.exports` ki jagah `export default`

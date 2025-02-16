@@ -5,7 +5,7 @@ import { adminDb } from '@/firebaseAdmin'
 import Document from './Document'
 
 const Documents = async () => {
-  auth.protect()
+  auth().protect()
 
   const {userId} = await auth()
 
