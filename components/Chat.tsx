@@ -41,23 +41,14 @@ const Chat = ({id} : {id: string}) => {
         bottomOfChatRef.current?.scrollIntoView({ behavior: "smooth" });
       }, [messages]);
     
-    useEffect(() => {
+      useEffect(() => {
         if (!snapshot) return;
-    
+      
         console.log("Updated snapshot", snapshot.docs);
-    
-        // get second last message to check if the AI is thinking
-        // const lastMessage = messages.pop();
-        const lastMessage = messages[messages.length - 1];
-    
-        if (lastMessage?.role === "ai" && lastMessage.message === "Thinking...") {
-          // return as this is a dummy placeholder message
-          return;
-        }
-    
+      
+        // Naya messages array banao from snapshot
         const newMessages = snapshot.docs.map((doc) => {
           const { role, message, createdAt } = doc.data();
-    
           return {
             id: doc.id,
             role,
@@ -65,11 +56,21 @@ const Chat = ({id} : {id: string}) => {
             createdAt: createdAt.toDate(),
           };
         });
-    
-        setMessages(newMessages);
-    
-        // Ignore messages dependancy warning here... we dont want an infinite loop
+      
+        // Agar current state ke last message mein "Thinking..." hai,
+        // to sirf tab update karo jab newMessages ka last message "Thinking..." se alag ho.
+        const lastCurrentMessage = messages[messages.length - 1];
+        const lastNewMessage = newMessages[newMessages.length - 1];
+      
+        if (lastCurrentMessage?.role === "ai" && lastCurrentMessage.message === "Thinking...") {
+          if (lastNewMessage && lastNewMessage.message !== "Thinking...") {
+            setMessages(newMessages);
+          }
+        } else {
+          setMessages(newMessages);
+        }
       }, [snapshot]);
+      
 
     const handleSubmit = async (e: FormEvent)=>{
         e.preventDefault()
