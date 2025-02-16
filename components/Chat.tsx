@@ -37,11 +37,9 @@ const Chat = ({id} : {id: string}) => {
     )
 
     // auto scroll when messages changes.
-    useEffect(()=>{
-        bottomOfChatRef.current?.scrollIntoView({
-            behavior:"smooth"
-        })
-    }, [messages])
+    useEffect(() => {
+        bottomOfChatRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, [messages]);
     
     useEffect(() => {
         if (!snapshot) return;
@@ -49,7 +47,8 @@ const Chat = ({id} : {id: string}) => {
         console.log("Updated snapshot", snapshot.docs);
     
         // get second last message to check if the AI is thinking
-        const lastMessage = messages.pop();
+        // const lastMessage = messages.pop();
+        const lastMessage = messages[messages.length - 1];
     
         if (lastMessage?.role === "ai" && lastMessage.message === "Thinking...") {
           // return as this is a dummy placeholder message

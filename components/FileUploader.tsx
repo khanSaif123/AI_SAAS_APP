@@ -77,7 +77,7 @@ const uploadInProgress = progress != null && progress >= 0 && progress <= 100
                   // @ts-expect-error
                   "--value": progress,
                   "--size": "12rem",
-                  "--thikness": "1.3rem"
+                  "--thickness": "1.3rem"
                 }}
             >{progress}%</div>
 
