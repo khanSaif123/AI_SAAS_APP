@@ -74,7 +74,7 @@ const uploadInProgress = progress != null && progress >= 0 && progress <= 100
               ${progress === 100 && "hidden"} `}
                 role='progressbar'
                 style={{
-                  // @ts-ignore
+                  // @ts-expect-error
                   "--value": progress,
                   "--size": "12rem",
                   "--thikness": "1.3rem"

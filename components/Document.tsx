@@ -1,19 +1,19 @@
 "use client"
 import React, { useTransition } from 'react'
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import byteSize from "byte-size";
 import Link from 'next/link'; // Add this import
 
 const Document = ({
-    id, name, size, downloadUrl
+    id, name, size, //downloadUrl
 }: {
     id: string;
     name: string;
     size: number;
     downloadUrl: string;
 }) => {
-    const router = useRouter();
-    const [isDeleting, startTransaction] = useTransition();
+    // const router = useRouter();
+    // const [isDeleting, startTransaction] = useTransition();
 
     // Wrap the clickable area with Link instead of using onClick
     return (
