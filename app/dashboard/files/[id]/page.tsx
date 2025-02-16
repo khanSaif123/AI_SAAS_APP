@@ -13,7 +13,7 @@ const ChatToFilePage = async (props: {
   auth.protect(); // if user is logged in then only listen to the request.
 
     // Destructure params after authentication
-  const { id } = props.params;
+  const { id } = await props.params;
   
   const {userId} = await auth()
 
