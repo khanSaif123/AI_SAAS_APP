@@ -1,50 +1,36 @@
-import Chat from "@/components/Chat";
-import PdfView from "@/components/PdfView";
-import { adminDb } from "@/firebaseAdmin";
-import { auth } from "@clerk/nextjs/server";
+  import Chat from "@/components/Chat";
+  import PdfView from "@/components/PdfView";
+  import { adminDb } from "@/firebaseAdmin";
+  import { auth } from "@clerk/nextjs/server";
 
-// Define PageProps type
-type PageProps = {
-  params: {
-    id: string;
-  };
-  searchParams?: {
-    [key: string]: string | string[] | undefined;
-  };
-};
+  async function ChatToFilePage({ params }: { params: { id: string } }) {
+    auth.protect();
+    const { userId } = await auth();
 
-async function ChatToFilePage({ params }: PageProps) {
-  const { id } = params;
+     // Await the entire params object
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
 
-  auth.protect();
-  const { userId } = await auth();
+    const ref = await adminDb
+      .collection("users")
+      .doc(userId!)
+      .collection("files")
+      .doc(id)
+      .get();
 
-  const ref = await adminDb
-    .collection("users")
-    .doc(userId!)
-    .collection("files")
-    .doc(id)
-    .get();
+    const url = ref.data()?.downloadUrl;
 
-  const url = ref.data()?.downloadUrl;
+    return (
+      <div className="grid lg:grid-cols-5 h-full overflow-hidden">
+        <div className="col-span-5 lg:col-span-2 overflow-y-auto">
+          <Chat id={id} />
+        </div>
 
-  console.log("User ID:", userId);
-  console.log("Download URL:", url);
-
-  return (
-    <div className="grid lg:grid-cols-5 h-full overflow-hidden">
-      {/* Right */}
-      <div className="col-span-5 lg:col-span-2 overflow-y-auto">
-        {/* Chat */}
-        <Chat id={id} />
+        <div className="col-span-5 lg:col-span-3 bg-gray-100 border-r-2 lg:border-indigo-600 lg:-order-1 overflow-auto">
+          <PdfView url={url} />
+        </div>
       </div>
+    );
+  }
 
-      {/* Left */}
-      <div className="col-span-5 lg:col-span-3 bg-gray-100 border-r-2 lg:border-indigo-600 lg:-order-1 overflow-auto">
-        {/* PDFView */}
-        <PdfView url={url} />
-      </div>
-    </div>
-  );
-}
-export default ChatToFilePage;
+  export default ChatToFilePage;
