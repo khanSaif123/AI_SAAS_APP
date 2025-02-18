@@ -11,6 +11,7 @@ import { collection, orderBy, query } from "firebase/firestore";
 import { db } from "@/firebase";
 import askQuestion from '@/actions/askQuestion';
 import ChatMessage from './ChatMessage';
+import { useToast } from '@/hooks/use-toast';
 
 export type Message = {
     id?: string;
@@ -22,6 +23,7 @@ export type Message = {
 const Chat = ({id} : {id: string}) => {
 
     const {user} = useUser() // get the current loggin user and all the data related to this user
+    const {toast} = useToast();
 
     const [input, setInput] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
@@ -98,14 +100,21 @@ const Chat = ({id} : {id: string}) => {
             const {success, message} = await askQuestion(id, q);
     
             if(!success){
-                setMessages((prev) =>
-                prev.slice(0, prev.length - 1).concat([
-                    {
-                        role:"ai",
-                        message:   `Whoops... ${message}`,
-                        createdAt: new Date()
-                    },
-                ])
+              // Toast notification.
+              toast({
+                variant: "destructive",
+                title: "Error",
+                description: message,
+              });
+
+              setMessages((prev) =>
+              prev.slice(0, prev.length - 1).concat([
+                  {
+                      role:"ai",
+                      message:   `Whoops... ${message}`,
+                      createdAt: new Date()
+                  },
+              ])
             )
             }
         })

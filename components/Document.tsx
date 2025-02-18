@@ -1,19 +1,24 @@
 "use client"
-import React from 'react'
-// import { useRouter } from 'next/navigation';
+import  { useTransition } from 'react'
+import { useRouter } from 'next/navigation';
 import byteSize from "byte-size";
 import Link from 'next/link'; // Add this import
+import useSubscription from '@/hooks/useSubscription';
+import { DownloadCloud, Trash2Icon } from "lucide-react";
+import { Button } from './ui/button';
+import { deleteDocument } from '@/actions/deleteDocument';
 
 const Document = ({
-    id, name, size, //downloadUrl
+    id, name, size, downloadUrl
 }: {
     id: string;
     name: string;
     size: number;
     downloadUrl: string;
 }) => {
-    // const router = useRouter();
-    // const [isDeleting, startTransaction] = useTransition();
+    const router = useRouter();
+    const [isDeleting, startTransaction] = useTransition();
+    const {hasActiveMembership} = useSubscription()
 
     // Wrap the clickable area with Link instead of using onClick
     return (
@@ -26,6 +31,39 @@ const Document = ({
                     </p>
                 </div>
             </Link>
+
+            {/* Actions */}
+            <div className='flex space-x-2 justify-end'>
+
+            <Button
+                variant="outline"
+                disabled={isDeleting || !hasActiveMembership}
+                onClick={() => {
+                    const prompt = window.confirm(
+                    "Are you sure you want to delete this document?"
+                    );
+
+                    if (prompt) {
+                    // delete document
+                    startTransaction(async () => {
+                        await deleteDocument(id);
+                    });
+                    }
+                }}
+                >
+                <Trash2Icon className="h-6 w-6 text-red-500" />
+                {!hasActiveMembership && (
+                    <span className="text-red-500 ml-2">PRO Feature</span>
+                )}
+                </Button>
+
+                <Button variant="outline" asChild>
+                    <a target='_blank' href={downloadUrl}>
+                        <DownloadCloud className='h-6 w-6 text-indigo-600'/>
+                    </a>
+                </Button>
+
+            </div>
         </div>
     )
 }

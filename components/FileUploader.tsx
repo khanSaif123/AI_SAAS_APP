@@ -10,11 +10,15 @@ import {
 } from "lucide-react"
 import useUpload, { StatusText } from '@/hooks/useUpload'
 import { useRouter } from 'next/navigation'
+import useSubscription from '@/hooks/useSubscription'
+import { useToast } from '@/hooks/use-toast'
 
 const FileUploader = () => {
 
-  // custom hook for handle uplade
+  // custom hook for handle uplode
   const {progress, status, fileId, handleUpload} = useUpload()
+  const {isOverFileLimit, loading} = useSubscription()
+  const {toast} = useToast()
   const router = useRouter()
 
   console.log("file id -> ", fileId)
@@ -29,13 +33,22 @@ const FileUploader = () => {
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
-    if(file){
-      await handleUpload(file)
-      
-    }else{
-      // toast notification
+    if (file) {
+      if (!isOverFileLimit) {
+        await handleUpload(file);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Free Plan File Limit Reached",
+          description:
+            "You have reached the maximum number of files allowed for your account. Please upgrade to add more documents.",
+        });
+      }
+    } else {
+      // do nothing...
+      // toast...
     }
-},[handleUpload])
+},[handleUpload, isOverFileLimit, toast])
 
 const statusIcons: {
   [key in StatusText]: JSX.Element

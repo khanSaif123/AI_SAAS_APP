@@ -3,6 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
 import { FilePlus2 } from 'lucide-react'
+import UpgradeButton from './UpgradeButton'
 
 const Header = () => {
   return (
@@ -28,6 +29,7 @@ const Header = () => {
                 </Button>
 
                 {/* upgrade btn */}
+                <UpgradeButton/>
 
                 {/* give profile picture when u loged in */}
                 <UserButton/>
